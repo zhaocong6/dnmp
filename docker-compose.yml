@@ -1,0 +1,61 @@
+version: "3"
+
+networks:
+  backend:
+  frontend:
+
+services:
+
+  redis:
+    image: redis:5.0.7-alpine
+    networks:
+      - backend
+    volumes:
+      - ./redis/redis.conf:/etc/redis/redis.conf:ro
+      - ./redis/data:/data
+    command: ["redis-server", "/etc/redis/redis.conf"]
+    ports:
+      - "6380:6379"
+    restart: always
+
+  mysql:
+    image: mysql:8.0.17
+    networks:
+      - backend
+    volumes:
+      - ./mysql/my.cnf:/etc/mysql/my.cnf:ro
+      - ./mysql/data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - TZ=Asia/Shanghai
+    ports:
+      - "3306:3306"
+    restart: always
+
+  php:
+    build: ./php
+    restart: always
+    networks:
+      - backend
+      - frontend
+    volumes:
+      - ./app:/var/www
+      - ./php/php.ini:/usr/local/etc/php/php.ini
+    depends_on:
+      - mysql
+      - redis
+
+  nginx:
+    build: ./nginx
+    volumes:
+      - ./app:/var/www
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/log:/var/log/nginx
+    restart: always
+    ports:
+      - "8080:80"
+    networks:
+      - frontend
+    depends_on:
+      - php
