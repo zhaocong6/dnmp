@@ -16,7 +16,7 @@ RUN apk update \
     && curl -L -o /tmp/reids.tar.gz https://codeload.github.com/phpredis/phpredis/tar.gz/5.0.2 \
     && tar -xzf /tmp/reids.tar.gz \
     && mv phpredis-5.0.2 /usr/src/php/ext/reids \
-    && docker-php-ext-install reids\
+    && docker-php-ext-install reids \
 
     && curl -L -o /tmp/swoole.tar.gz https://github.com/swoole/swoole-src/archive/v4.4.15.tar.gz \
     && tar -xzf /tmp/swoole.tar.gz \
