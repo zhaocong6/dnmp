@@ -40,6 +40,7 @@ services:
       - frontend
     volumes:
       - ./app:/var/www
+      - ./php/php-fpm.d:/usr/local/etc/php-fpm.d
       - ./php/php.ini:/usr/local/etc/php/php.ini
     depends_on:
       - mysql
